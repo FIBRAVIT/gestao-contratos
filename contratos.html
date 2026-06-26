@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contratos — Gestão de Contratos</title>
+<style>
+  :root{--primary:#1a3a5c;--primary-light:#2563a8;--accent:#f59e0b;--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--bg:#f0f4f8;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--sw:240px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+  .sidebar{width:var(--sw);background:var(--primary);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;box-shadow:4px 0 12px rgba(0,0,0,.15)}
+  .sb-logo{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+  .sb-logo .icon{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .sb-logo .txt{font-size:13px;font-weight:700;line-height:1.3}
+  .sb-logo .sub{font-size:10px;opacity:.6}
+  .sb-nav{flex:1;padding:14px 0;overflow-y:auto}
+  .nav-sec{padding:8px 16px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.5}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;transition:all .2s;font-size:13.5px;border-left:3px solid transparent;text-decoration:none;color:#fff}
+  .nav-item:hover{background:rgba(255,255,255,.08)}
+  .nav-item.active{background:rgba(255,255,255,.12);border-left-color:var(--accent);color:var(--accent)}
+  .nav-item .ic{font-size:18px;width:22px;text-align:center}
+  .sb-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,.1);font-size:11px;opacity:.5}
+  .main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column}
+  .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  .topbar-title{font-size:18px;font-weight:800;color:var(--primary)}
+  .topbar-right{display:flex;align-items:center;gap:12px}
+  .btn{padding:8px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .2s;text-decoration:none}
+  .btn-primary{background:var(--primary-light);color:#fff}
+  .btn-primary:hover{background:var(--primary)}
+  .btn-success{background:var(--success);color:#fff}
+  .btn-outline{background:transparent;color:var(--primary-light);border:1.5px solid var(--primary-light)}
+  .btn-outline:hover{background:var(--primary-light);color:#fff}
+  .btn-sm{padding:5px 12px;font-size:12px}
+  .content{padding:28px;flex:1}
+  .table-card{background:var(--card);border-radius:14px;padding:22px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:24px}
+  .table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+  .table-title{font-size:15px;font-weight:700}
+  .table-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .search-box{padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;width:220px;transition:border .2s}
+  .search-box:focus{border-color:var(--primary-light)}
+  .filter-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;background:#fff;cursor:pointer}
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{background:#f8fafc;padding:10px 14px;text-align:left;font-weight:700;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border);white-space:nowrap}
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+  tbody tr:hover{background:#f8fafc}
+  tbody tr:last-child td{border-bottom:none}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase}
+  .badge-success{background:#d1fae5;color:#065f46}
+  .badge-danger{background:#fee2e2;color:#991b1b}
+  .badge-warning{background:#fef3c7;color:#92400e}
+  .badge-info{background:#dbeafe;color:#1e40af}
+  .badge-gray{background:#f1f5f9;color:#475569}
+  .tag{display:inline-block;background:#e0f2fe;color:#0369a1;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600}
+  .pagination{display:flex;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap;gap:10px}
+  .pagination-info{font-size:12px;color:var(--muted)}
+  .pagination-btns{display:flex;gap:4px}
+  .page-btn{width:32px;height:32px;border:1.5px solid var(--border);background:#fff;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .page-btn:hover{border-color:var(--primary-light);color:var(--primary-light)}
+  .page-btn.active{background:var(--primary-light);color:#fff;border-color:var(--primary-light)}
+  .page-btn:disabled{opacity:.4;cursor:not-allowed}
+  .loading{display:flex;align-items:center;justify-content:center;padding:60px;flex-direction:column;gap:16px;color:var(--muted)}
+  .spinner{width:40px;height:40px;border:4px solid var(--border);border-top-color:var(--primary-light);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+  .empty-icon{font-size:48px;margin-bottom:12px}
+
+  /* MODAL */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px}
+  .modal-overlay.open{display:flex}
+  .modal{background:var(--card);border-radius:16px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:slideUp .25s ease}
+  @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1}
+  .modal-title{font-size:16px;font-weight:800;color:var(--primary)}
+  .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)}
+  .modal-body{padding:22px 24px}
+  .modal-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .detail-item{background:#f8fafc;border-radius:8px;padding:10px 12px}
+  .detail-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+  .detail-value{font-size:13px;color:var(--text);font-weight:500}
+  .divider{height:1px;background:var(--border);margin:16px 0}
+
+  @media(max-width:700px){.sidebar{width:60px}.sb-logo .txt,.sb-logo .sub,.nav-item span,.nav-sec{display:none}.main{margin-left:60px}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+<div class="sb-logo">
+<div class="icon">📋</div>
+<div><div class="txt">Gestão de<br/>Contratos</div><div class="sub">&amp; Ativos</div></div>
+</div>
+<nav class="sb-nav">
+<div class="nav-sec">Páginas</div>
+<a class="nav-item" href="dashboard.html"><span class="ic">📊</span><span>Dashboard</span></a>
+<a class="nav-item active" href="contratos.html"><span class="ic">📄</span><span>Contratos</span></a>
+<a class="nav-item" href="medicoes.html"><span class="ic">📏</span><span>Medições</span></a>
+<a class="nav-item" href="ativos.html"><span class="ic">🏗️</span><span>Ativos</span></a>
+<div class="nav-sec">Formulários</div>
+<a class="nav-item" href="form_contrato.html"><span class="ic">➕</span><span>Novo Contrato</span></a>
+<a class="nav-item" href="form_medicao.html"><span class="ic">➕</span><span>Nova Medição</span></a>
+</nav>
+<div class="sb-footer">v2.0 · Google Sheets</div>
+</aside>
+<div class="main">
+<div class="topbar">
+<div class="topbar-title">📄 Contratos</div>
+<div class="topbar-right">
+<span id="lastUpdate" style="font-size:12px;color:var(--muted)"></span>
+<button class="btn btn-outline btn-sm" onclick="loadContratos()">🔄 Atualizar</button>
+<a class="btn btn-primary" href="form_contrato.html">➕ Novo Contrato</a>
+</div>
+</div>
+<div class="content">
+<div class="table-card">
+<div class="table-header">
+<div class="table-title">📄 Lista de Contratos</div>
+<div class="table-controls">
+<input class="search-box" id="searchInput" oninput="filterTable()" placeholder="🔍 Buscar cliente, OV..." type="text"/>
+<select class="filter-select" id="filterStatus" onchange="filterTable()">
+<option value="">Todos os Status</option>
+<option value="REGULAR">Regular</option>
+<option value="VENCIDO">Vencido</option>
+<option value="REAJUSTAR">Reajustar</option>
+<option value="FINALIZADO">Finalizado</option>
+</select>
+<select class="filter-select" id="filterTipo" onchange="filterTable()">
+<option value="">Todos os Tipos</option>
+<option value="Medição">Medição</option>
+<option value="Faturamento Direto">Fat. Direto</option>
+<option value="Direto">Direto</option>
+</select>
+</div>
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>OV</th><th>Cliente</th><th>Local</th><th>Início</th>
+<th>Término</th><th>Tipo Fat.</th><th>Status</th><th>Situação</th><th>Ações</th>
+</tr>
+</thead>
+<tbody id="tableBody">
+<tr><td colspan="9"><div class="loading"><div class="spinner"></div><span>Carregando...</span></div></td></tr>
+</tbody>
+</table>
+</div>
+<div class="pagination">
+<div class="pagination-info" id="pageInfo"></div>
+<div class="pagination-btns" id="pageBtns"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- MODAL DETALHE -->
+<div class="modal-overlay" id="modalDetalhe">
+<div class="modal">
+<div class="modal-header">
+<div class="modal-title" id="modalTitle">Detalhes do Contrato</div>
+<button class="modal-close" onclick="closeModal()">✕</button>
+</div>
+<div class="modal-body" id="modalBody"></div>
+<div class="modal-footer">
+<button class="btn btn-outline" onclick="closeModal()">Fechar</button>
+</div>
+</div>
+</div>
+<script src="config.js"></script>
+<script>
+const API = window.API_URL || '';
+let allData = [], filtered = [], currentPage = 1;
+const PER_PAGE = 20;
+
+const statusMap = {
+  'REGULAR':'badge-success','VENCIDO':'badge-danger',
+  'REAJUSTAR':'badge-warning','FINALIZADO':'badge-gray','ATIVO':'badge-success'
+};
+
+function badge(s){ return `<span class="badge ${statusMap[s]||'badge-gray'}">${s||'—'}</span>`; }
+function fmtDate(d){
+  if(!d||d==='NaT'||d==='nan'||d==='') return '—';
+  try{ const dt=new Date(d); return isNaN(dt)?d:dt.toLocaleDateString('pt-BR'); }catch{return d;}
+}
+
+async function loadContratos() {
+  if (!API) {
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">⚙️</div><p>Configure a URL da API no arquivo config.js</p></div></td></tr>`;
+    return;
+  }
+  document.getElementById('tableBody').innerHTML = `<tr><td colspan="9"><div class="loading"><div class="spinner"></div><span>Carregando contratos...</span></div></td></tr>`;
+  try {
+    const res = await fetch(`${API}?action=getContratos`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    allData = data.data || [];
+    filtered = [...allData];
+    currentPage = 1;
+    renderTable();
+    document.getElementById('lastUpdate').textContent = 'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
+  } catch(e) {
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">❌</div><p>Erro: ${e.message}</p></div></td></tr>`;
+  }
+}
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const st = document.getElementById('filterStatus').value;
+  const tp = document.getElementById('filterTipo').value;
+  filtered = allData.filter(c => {
+    const mq = !q || c.cliente.toLowerCase().includes(q) || c.ov.includes(q) || (c.local||'').toLowerCase().includes(q);
+    const ms = !st || c.status === st;
+    const mt = !tp || c.tipo_faturamento === tp;
+    return mq && ms && mt;
+  });
+  currentPage = 1;
+  renderTable();
+}
+
+function renderTable() {
+  const start = (currentPage-1)*PER_PAGE;
+  const items = filtered.slice(start, start+PER_PAGE);
+  const tbody = document.getElementById('tableBody');
+  if (!items.length) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📭</div><p>Nenhum contrato encontrado</p></div></td></tr>`;
+    document.getElementById('pageInfo').textContent = '';
+    document.getElementById('pageBtns').innerHTML = '';
+    return;
+  }
+  tbody.innerHTML = items.map((c,i) => `
+    <tr>
+      <td><strong>${c.ov}</strong></td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.cliente}">${c.cliente}</td>
+      <td>${c.local||'—'}</td>
+      <td>${fmtDate(c.inicio)}</td>
+      <td>${fmtDate(c.termino)}</td>
+      <td>${c.tipo_faturamento?`<span class="tag">${c.tipo_faturamento}</span>`:'—'}</td>
+      <td>${badge(c.status)}</td>
+      <td>${badge(c.situacao)}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="verDetalhe(${start+i})">👁 Ver</button></td>
+    </tr>`).join('');
+
+  // Pagination
+  const total = filtered.length;
+  const pages = Math.ceil(total/PER_PAGE);
+  const s = start+1, e = Math.min(start+PER_PAGE, total);
+  document.getElementById('pageInfo').textContent = `Mostrando ${s}–${e} de ${total}`;
+  const pb = document.getElementById('pageBtns');
+  pb.innerHTML = '';
+  const addBtn = (lbl, pg, dis, act) => {
+    const b = document.createElement('button');
+    b.className = 'page-btn'+(act?' active':'');
+    b.textContent = lbl; b.disabled = dis;
+    b.onclick = () => { currentPage=pg; renderTable(); };
+    pb.appendChild(b);
+  };
+  addBtn('‹', currentPage-1, currentPage===1);
+  let sp=Math.max(1,currentPage-2), ep=Math.min(pages,sp+4);
+  if(ep-sp<4) sp=Math.max(1,ep-4);
+  for(let i=sp;i<=ep;i++) addBtn(i,i,false,i===currentPage);
+  addBtn('›', currentPage+1, currentPage===pages);
+}
+
+function verDetalhe(idx) {
+  const c = filtered[idx];
+  document.getElementById('modalTitle').textContent = `📄 OV ${c.ov} — ${c.cliente}`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label">OV</div><div class="detail-value">${c.ov}</div></div>
+      <div class="detail-item"><div class="detail-label">Cliente</div><div class="detail-value">${c.cliente}</div></div>
+      <div class="detail-item"><div class="detail-label">Nº Contrato Cliente</div><div class="detail-value">${c.num_contrato_cliente||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Local</div><div class="detail-value">${c.local||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Início</div><div class="detail-value">${fmtDate(c.inicio)}</div></div>
+      <div class="detail-item"><div class="detail-label">Término</div><div class="detail-value">${fmtDate(c.termino)}</div></div>
+      <div class="detail-item"><div class="detail-label">Renovação</div><div class="detail-value">${fmtDate(c.renovacao)||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Reajustar</div><div class="detail-value">${fmtDate(c.reajustar)||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Dia Medição</div><div class="detail-value">${c.data_medicao||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Dia Faturamento</div><div class="detail-value">${c.data_faturamento||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Tipo Faturamento</div><div class="detail-value">${c.tipo_faturamento||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Produto/Serviço</div><div class="detail-value">${c.produto_servico||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">${badge(c.status)}</div></div>
+      <div class="detail-item"><div class="detail-label">Situação</div><div class="detail-value">${badge(c.situacao)}</div></div>
+    </div>
+    ${c.observacoes&&c.observacoes!=='0'?`<div class="divider"></div><div class="detail-item"><div class="detail-label">Observações</div><div class="detail-value">${c.observacoes}</div></div>`:''}
+    <div class="divider"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn btn-success btn-sm" href="form_medicao.html">📏 Registrar Medição</a>
+    </div>
+  `;
+  document.getElementById('modalDetalhe').classList.add('open');
+}
+
+function closeModal(){ document.getElementById('modalDetalhe').classList.remove('open'); }
+document.getElementById('modalDetalhe').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+
+loadContratos();
+</script>
+</body>
+</html>
